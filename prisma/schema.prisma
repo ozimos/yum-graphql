@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Address {
+  areaCode       Int
+  createdAt      DateTime @default(now())
+  defaultAddress Boolean? @default(false)
+  id             String   @id @default(cuid())
+  lga            String
+  state          String
+  street1        String
+  street2        String
+  updatedAt      DateTime @default(now())
+  userId         String
+  customer       User     @relation(fields: [userId], references: [id])
+}
+
+model Meal {
+  createdAt   DateTime    @default(now())
+  deletedAt   DateTime?
+  description String
+  id          String       @id @default(cuid())
+  imageUrl    String
+  price       Int
+  tags        String[]
+  title       String
+  updatedAt   DateTime    @default(now())
+  userId      String
+  caterer     User        @relation(fields: [userId], references: [id])
+  mealMenus   MealMenu[]
+  mealOrders  MealOrder[]
+
+  @@unique([title, userId], name: "userTitle")
+  @@unique([title, userId, deletedAt], name: "userTitle2")
+}
+
+model MealMenu {
+  id     String @id  @default(cuid())
+  mealId String
+  menuId String
+  meal   Meal   @relation(fields: [mealId], references: [id])
+  menu   Menu   @relation(fields: [menuId], references: [id])
+}
+
+model MealOrder {
+  id       String @id  @default(cuid())
+  mealId   String
+  orderId  String
+  quantity Int?
+  meal     Meal   @relation(fields: [mealId], references: [id])
+  order    Order  @relation(fields: [orderId], references: [id])
+}
+
+model Menu {
+  createdAt DateTime   @default(now())
+  id        String     @id   @default(cuid())
+  menuDate  DateTime   @default(dbgenerated())
+  updatedAt DateTime   @default(now())
+  userId    String
+  caterer   User       @relation(fields: [userId], references: [id])
+  mealMenus MealMenu[]
+}
+
+model Order {
+  createdAt DateTime    @default(now())
+  id        String      @id  @default(cuid())
+  status    Status      @default(dbgenerated())
+  updatedAt DateTime    @default(now())
+  userId    String
+  customer  User        @relation(fields: [userId], references: [id])
+  mealOrders MealOrder[]
+}
+
+model User {
+  createdAt DateTime  @default(now())
+  email     String    @unique
+  firstName String
+  id        String    @id  @default(cuid())
+  lastName  String
+  password  String
+  role      Role?     @default(dbgenerated())
+  updatedAt DateTime  @default(now())
+  addresses   Address[]
+  meals      Meal[]
+  menus      Menu[]
+  orders     Order[]
+}
+
+enum Role {
+  ADMIN
+  CATERER
+  USER
+}
+
+enum Status {
+  DISPATCHED
+  FULFILLED
+  PENDING
+  PROCESSING
+}
+
