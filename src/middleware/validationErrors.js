@@ -1,5 +1,3 @@
-import { BaseError } from 'sequelize';
-
 const validationErrors = (err, req, res, next) => {
     if (err.error && err.error.isJoi) {
         const message = {};
@@ -9,12 +7,6 @@ const validationErrors = (err, req, res, next) => {
         });
         return res.status(400).json({
             message,
-        });
-    }
-    if (err instanceof BaseError) {
-        const error = err.original || err.parent || err;
-        return res.status(422).json({
-            message: error.message,
         });
     }
     return res.status(400).json({ message: err.message });
