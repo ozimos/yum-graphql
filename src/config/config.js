@@ -4,7 +4,7 @@ module.exports = {
     development: {
         username: 'ozimos',
         password: 'root',
-        database: 'book_a_meal_dev',
+        database: 'yum_graphql',
         host: '127.0.0.1',
         dialect: 'postgres',
         dialectModule: pg,

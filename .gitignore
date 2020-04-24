@@ -34,6 +34,8 @@ server-coverage
 # nyc test coverage
 .nyc_output
 
+# build directory
+dist
 
 # node-waf configuration
 .lock-wscript

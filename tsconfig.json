@@ -1,10 +1,19 @@
 {
     "compilerOptions": {
-        "outDir": "./built",
+        "module": "esnext",
+        "target": "ES2020",
+        "sourceMap": true,
+        "outDir": "dist",
+        "lib": ["esnext"],
         "allowJs": true,
-        "target": "es5"
+        "checkJs": true,
+        "skipLibCheck": true,
+        "strict": false,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
     },
-    "include": [
-        "./src/**/*"
-    ]
+    "include": ["src/*"]
 }
