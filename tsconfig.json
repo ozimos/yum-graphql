@@ -1,11 +1,12 @@
 {
     "compilerOptions": {
-        "module": "es6",
+        "module": "ES6",
         "target": "ES2019",
         "sourceMap": true,
         "outDir": "dist",
-        "lib": ["ES2019"],
+        "lib": ["ESNEXT"],
         "allowJs": true,
+        "rootDir": "src",
         "checkJs": true,
         "skipLibCheck": true,
         "strict": false,

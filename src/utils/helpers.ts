@@ -3,7 +3,7 @@ import { TOKEN_PASSWORD, tokens } from './constants';
 
 export const handleError = (error) => {
     // add any other logging mechanism here e.g. Sentry
-    throw error;
+    return error;
 };
 interface CreateTokenInput {
     id: string;

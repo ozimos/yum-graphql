@@ -1,4 +1,38 @@
 import { mutationField, stringArg, intArg, mutationType } from '@nexus/schema';
+import { hash } from 'bcrypt';
+import { generateAccessToken, handleError } from '../../utils/helpers';
+import errors from '../../utils/errors';
+
+export const signup = mutationField('signup', {
+    type: 'AuthPayload',
+    args: {
+        firstName: stringArg({ nullable: true }),
+        lastName: stringArg({ nullable: true }),
+        email: stringArg({ required: true }),
+        password: stringArg({ required: true }),
+    },
+    resolve: async (_parent, { firstName, lastName, email, password: newPassword }, ctx) => {
+        const hashedPassword = await hash(newPassword, 10);
+        let user, password;
+        try {
+            ({ password, ...user } = await ctx.prisma.user.create({
+                data: {
+                    firstName,
+                    lastName,
+                    email,
+                    password: hashedPassword,
+                },
+            }));
+        } catch (e) {
+            handleError(errors.invalidUserEmail);
+        }
+        const accessToken = generateAccessToken(user);
+        return {
+            accessToken,
+            user,
+        };
+    },
+});
 
 export const createMeal = mutationField('createMeal', {
     type: 'Meal',
@@ -28,5 +62,3 @@ export const Mutation = mutationType({
         t.crud.deleteOneMeal();
     },
 });
-
-export * from './User';

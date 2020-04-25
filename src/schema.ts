@@ -1,10 +1,10 @@
 import { nexusPrismaPlugin } from 'nexus-prisma';
-import { intArg, makeSchema, mutationType, objectType, queryType, stringArg } from '@nexus/schema';
+import { makeSchema } from '@nexus/schema';
 import { join } from 'path';
 
 import { applyMiddleware } from 'graphql-middleware';
 import permissions from './permissions';
-import * as allTypes from './resolvers'
+import * as allTypes from './resolvers';
 
 export const schema = makeSchema({
     types: [allTypes],

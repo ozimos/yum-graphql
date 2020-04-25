@@ -12,8 +12,7 @@ export const tokens = {
 
 export function getTokenPayload(context: Context) {
     const { tokenPayload, tokenError } = context;
-
-    if (tokenPayload?.userId && tokenPayload?.type !== tokens.access.name) {
+    if (tokenPayload?.userId && tokenPayload?.type === tokens.access.name) {
         return tokenPayload;
     }
     const error = tokenError ? errors.invalidToken : errors.notAuthenticated;
