@@ -1,23 +1,39 @@
-import jwt from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 
-export function isUser(req, res, next) {
-    const bearerHeader = req.headers.authorization;
-    if (typeof bearerHeader === 'undefined') {
-        return res.status(401).json({
-            message: 'No token provided.',
+export function extractTokenPayload(req) {
+    const result = {};
+    const bearerHeader = req.get('Authorization');
+    if (typeof bearerHeader !== 'undefined') {
+        const token = bearerHeader.split(' ').pop();
+        verify(token, process.env.TOKEN_PASSWORD, (err, tokenPayload) => {
+            if (err) {
+                result.tokenError = err;
+            }
+            result.tokenPayload = tokenPayload;
         });
     }
-    const bearer = bearerHeader.split(' ');
-    const token = bearer[1];
-    jwt.verify(token, process.env.TOKEN_PASSWORD, (err, decoded) => {
-        if (err) {
-            return res.status(403).json({
-                message: err.message,
-            });
-        }
-        req.decoded = decoded;
-    });
+    return result;
+}
+export function extractTokenPayloadMiddleware(req, res, next) {
+    const { tokenPayload, tokenError } = extractTokenPayload(req);
+    if (tokenPayload) {
+        req.tokenPayload = tokenPayload;
+    } else if (tokenError) {
+        req.tokenError = tokenError;
+    }
     return next();
+}
+export function isUser(req, res, next) {
+    if (req.decoded && !req.tokenError) {
+        return next();
+    }
+    const message = req.tokenError
+        ? req.tokenError.message
+        : 'You Are not Authorized to access this page!';
+
+    return res.status(403).json({
+        message,
+    });
 }
 
 export function isAdmin(req, res, next) {

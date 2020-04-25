@@ -1,20 +1,18 @@
 import express from 'express';
-import { ApolloServer, gql } from 'apollo-server-express';
-import authRouter from './routes/authRouter';
+import { ApolloServer } from 'apollo-server-express';
 import validationErrors from './middleware/validationErrors';
 
-import schema from './schema';
+import { schemaWithMiddleware } from './schema';
 import { createContext } from './context';
 
 const app = express();
-app.use('/api/v1/auth', authRouter);
 
 app.use(validationErrors);
 // Get port from environment and store in Express.
 const PORT = parseInt(process.env.PORT, 10) || 4000;
 app.set('port', PORT);
 
-const server = new ApolloServer({ schema, context: createContext })
+const server = new ApolloServer({ schema: schemaWithMiddleware, context: createContext });
 server.applyMiddleware({ app });
 app.listen({ port: PORT }, () =>
     /* eslint no-console: off */
